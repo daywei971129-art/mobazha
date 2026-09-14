@@ -77,6 +77,28 @@ release enables BTC, BCH, and LTC by default, subject to store configuration and
 See the [release scope](https://docs.mobazha.org/project/release-scope) before relying on any specific
 capability.
 
+## Supported payment networks
+
+The Node's multi-chain payment layer covers UTXO chains (Bitcoin, Bitcoin Cash, Litecoin, Zcash) and
+EVM networks, including **BNB Smart Chain** (BNB Chain, chain ID 56). On BNB Smart Chain the Node
+handles native **BNB** together with BEP-20 stablecoins — USDT
+(`0x55d398326f99059fF775485246999027B3197955`), USDC
+(`0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d`), and BUSD
+(`0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56`).
+
+Chain definitions live in [`pkg/wallet-interface/cointype.go`](./pkg/wallet-interface/cointype.go),
+asset metadata in [`pkg/assetid/registry.go`](./pkg/assetid/registry.go), and per-chain RPC defaults
+in [`internal/chains/config.go`](./internal/chains/config.go) — where BSC is configured against
+`bsc-dataseed.binance.org` for mainnet and `data-seed-prebsc-2-s2.binance.org` for testnet.
+
+Escrow on BNB Smart Chain and other EVM networks uses canonical
+[Safe](https://github.com/safe-global/safe-deployments) v1.4.1 multisig contracts: each order gets a
+dedicated 2-of-3 Safe (buyer, seller, moderator) deployed deterministically through the official
+`SafeProxyFactory`. Mobazha deploys no bespoke escrow contract of its own.
+
+Which networks a given store actually accepts depends on its configuration and on the capabilities
+advertised by the backend serving it.
+
 ## Go deeper
 
 - [How Mobazha fits together](https://docs.mobazha.org/project/product-map)
